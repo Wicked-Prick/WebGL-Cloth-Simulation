@@ -1,0 +1,79 @@
+<style>
+    body {
+        background-color: #363636;
+    }
+    
+    canvas {
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        background-color: rgba(255, 255, 255, 0);
+    }
+    
+    pre {
+        color: #ffffff;
+        text-align: left;
+        font-size: 28;
+        font-family: 'Times New Roman', Times, serif;
+    }
+</style>
+<html>
+
+<head>
+
+    <body>
+
+        <pre><i>
+        Left mouse click to interact. 
+            
+        Сlick the middle mouse button to pin.
+
+        Click shift to unpinned.
+        </i></pre>
+
+        <canvas id="c"></canvas>
+
+        <script type="shader" id="vertex">
+            precision mediump float; 
+            attribute vec4 a_position; 
+            uniform mat4 u_view, u_model, u_ortho; 
+            varying vec3 v_position;
+            void main() 
+            { 
+                 mat4 modelview = u_view * u_model; 
+                 gl_Position = u_ortho * modelview * a_position; 
+                 gl_PointSize = 2.0; 
+                 v_position = gl_Position.xyz/gl_Position.w;
+            }
+        </script>
+        <script type="shader" id="fragment">
+            precision mediump float; 
+            uniform vec2 u_resolution; 
+            uniform float u_time; 
+            uniform vec4 u_color; 
+            varying vec3 v_position; 
+            void main() 
+            { 
+                gl_FragColor = u_color; 
+            }
+        </script>
+        <script>
+            window.requestAnimFrame =
+                window.requestAnimationFrame ||
+                window.webkitRequestAnimationFrame ||
+                window.mozRequestAnimationFrame ||
+                window.oRequestAnimationFrame ||
+                window.msRequestAnimationFrame ||
+                function(callback) {
+                    window.setTimeout(callback, 1e3 / 60);
+                };
+        </script>
+        <script src="Point.js"></script>
+        <script src="Constraint.js"></script>
+        <script src="cloth.js"></script>
+        <script src="main.js"></script>
+    </body>
+
+</head>
+
+</html>

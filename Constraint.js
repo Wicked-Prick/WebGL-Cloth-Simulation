@@ -9,13 +9,10 @@ Constraint.prototype = {
     relaxation: function() {
         let dx = this.pointTwo.x - this.pointOne.x;
         let dy = this.pointTwo.y - this.pointOne.y;
-
-        let dist = Math.sqrt(dx * dx + dy * dy);
-
-        if (dist < this.length) return;
-
-        var error = (dist - this.length);
-        var prct_of_error = error * 0.5 * (1 - this.length / dist);
+        
+        let dist = Math.sqrt(dx * dx + dy * dy);      
+        
+        var prct_of_error = (dist - this.length) * 0.5 * (1 - this.length / dist);
 
         var normalizeX = dx * prct_of_error,
             normalizeY = dy * prct_of_error;
@@ -30,5 +27,4 @@ Constraint.prototype = {
             this.pointTwo.y -= normalizeY;
         }
     },
-
 }

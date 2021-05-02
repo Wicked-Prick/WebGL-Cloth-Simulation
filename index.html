@@ -16,13 +16,23 @@
         font-size: 28;
         font-family: 'Times New Roman', Times, serif;
     }
+    m{
+        color: #ffffff;
+        position: absolute;
+        text-align: center;
+        left: 45%;
+        bottom: 10%;
+    }
 </style>
 <html>
 
 <head>
 
     <body>
-
+        <m>
+            Controls:<br>
+            r-Reset, g-Gravity, w-DrawMode
+        </m>
         <pre><i>
         Left mouse click to interact. 
             
@@ -31,30 +41,40 @@
         Click shift to unpinned.
         </i></pre>
 
-        <canvas id="c"></canvas>
-
+        <canvas id="c"></canvas>       
         <script type="shader" id="vertex">
             precision mediump float; 
-            attribute vec4 a_position; 
+            attribute vec3 a_position; 
+            attribute vec4 a_color;
             uniform mat4 u_view, u_model, u_ortho; 
-            varying vec3 v_position;
+            varying vec3 v_position; 
+            varying vec4 v_color;
+           
             void main() 
-            { 
-                 mat4 modelview = u_view * u_model; 
-                 gl_Position = u_ortho * modelview * a_position; 
-                 gl_PointSize = 2.0; 
-                 v_position = gl_Position.xyz/gl_Position.w;
+            {  
+                v_color = a_color;
+                                                   
+                mat4 modelview = u_view * u_model;        
+                
+                gl_Position = u_ortho * modelview  * vec4(a_position, 1.);
+           
+                gl_PointSize = 10.;    
+               
+                v_position = gl_Position.xyz / gl_Position.w;
+      
             }
         </script>
         <script type="shader" id="fragment">
             precision mediump float; 
+ 
             uniform vec2 u_resolution; 
-            uniform float u_time; 
-            uniform vec4 u_color; 
+            uniform float u_time;  
+            varying vec4 v_color;
             varying vec3 v_position; 
+
             void main() 
             { 
-                gl_FragColor = u_color; 
+                gl_FragColor = v_color;
             }
         </script>
         <script>
@@ -68,9 +88,11 @@
                     window.setTimeout(callback, 1e3 / 60);
                 };
         </script>
+        <script src="var.js"></script>
         <script src="Point.js"></script>
         <script src="Constraint.js"></script>
         <script src="cloth.js"></script>
+        <script src="buffers.js"></script>
         <script src="main.js"></script>
     </body>
 

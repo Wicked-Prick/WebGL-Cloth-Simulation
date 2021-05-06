@@ -18,7 +18,7 @@
     }
     m{
         color: #ffffff;
-        position: absolute;
+        position: left;
         text-align: center;
         left: 45%;
         bottom: 10%;
@@ -31,16 +31,14 @@
     <body>
         <m>
             Controls:<br>
-            r-Reset, g-Gravity, w-DrawMode
+            left mouse button - interact<br>
+            mouse wheel - to pin<br>
+            shift - unpin<br>      
+            r - Reset <br>
+            g - on/off gravity <br>
+            w - DrawMode <br>
         </m>
-        <pre><i>
-        Left mouse click to interact. 
-            
-        Сlick the middle mouse button to pin.
-
-        Click shift to unpinned.
-        </i></pre>
-
+     
         <canvas id="c"></canvas>       
         <script type="shader" id="vertex">
             precision mediump float; 
@@ -58,7 +56,7 @@
                 
                 gl_Position = u_ortho * modelview  * vec4(a_position, 1.);
            
-                gl_PointSize = 10.;    
+                gl_PointSize = 5.;    
                
                 v_position = gl_Position.xyz / gl_Position.w;
       

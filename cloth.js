@@ -4,12 +4,15 @@ function Cloth() {
     this.vertices = new Float32Array(((clothX + 1) * (clothY + 1)) * 3);
     this.indices = new Uint32Array(this.vertices.length * 3);
     this.colors = [];
+    this.defaultProfile = new Array();
+    this.currentProfile = new Array();
     let cnt = 0;
-   
+    
+
     for (var y = 0; y <= clothY; ++y) {
         for (var x = 0; x <= clothX; ++x) {
-            var point = new Point(startX + x * spacing, startY - y * spacing, 0.0, !y && !(x % 15));
-
+            var point = new Point(startX + x * spacing, startY - y * spacing, 0.0, 
+                        !y && !(x % 15) );
             if (y != 0) {
                 point.attach(this.points[x + (y - 1) * (clothX + 1)], spacing);
             }
@@ -30,44 +33,51 @@ function Cloth() {
                 cnt = b;
             }
 
-            this.points.push(point);
+            this.points.push(point);          
             this.vertices[cnt++] = point.x;
             this.vertices[cnt++] = point.y;
-            this.vertices[cnt++] = point.z;    
+            this.vertices[cnt++] = point.z;  
+          
         }
     }
 }
 
 Cloth.prototype = {
     update: function(dt) {
-
+        
         i = accuracy;
+        
         while (--i) {
-            this.points.forEach(point => {
-                point.update_constraints();
-
-            });
-
+            
+            this.currentProfile = [];
+            
+            for(let i = 0; i < this.points.length;i++){
+                let point = this.points[i];
+                point.update_constraints();   
+                
+                for(let j = 0; j < point.constraints.length; ++j){
+                    this.currentProfile.push(point.constraints[j].currentDistance);
+                }                 
+            }      
         }
-
+        
         var cnt = 0;
+        
         this.points.forEach((point) => {
             point.update(dt);
             this.vertices[cnt++] = point.x;
             this.vertices[cnt++] = point.y;
             this.vertices[cnt++] = point.z;
-        });
-
+        }); 
+             
     },
     
     mousePressed: function() {
 
         for (var i = 0; i < this.points.length; ++i) {
             var point = this.points[i];
-            if ((Math.abs(point.x - mouse.x) < spacing) &&
-                (Math.abs(point.y - mouse.y) < spacing) &&
-                mouse.down && !currentPoint) {
-
+            if (this.calculateDistance(point, mouse) < spacing 
+            && mouse.down && !currentPoint) {
                 currentPoint = point;
             }
         }
@@ -91,34 +101,40 @@ Cloth.prototype = {
             }
         }
     },
-
-    getColor: function(){
-
-        this.colors = [];
+       
+    updateStrain: function(){
+        this.colors = [];       
         
-        for(let i = 0; i < this.points.length; ++i){
-                
-            let point = this.points[i];
-            let offsetDist = this.calculateDistance(mouse, currentPoint);  
-            let currentDist = this.calculateDistance(point, currentPoint);
-            
-            if(currentPoint){
-                //let streight = Math.ceil(255 - (currentDist/maxd * 255) );
-                let diff = Math.abs(offsetDist - currentDist ) /  spacing ;
-                
-                if( currentDist < offsetDist){
-                    this.colors.push(diff, 1 / diff, 1 - diff, 1);
-                }else{
-                    this.colors.push(0., 1 - diff, 1 / diff, 1);
-                }
-                
-            }else if(!mouse.down || !currentPoint){
-               
-                this.colors.push(0, 0, 0.59, 1);
+        for(let i = 0; i < this.defaultProfile.length; ++i){
+            for(let j = 0; j < this.currentProfile.length; ++j){
+                let force = (this.currentProfile[j] - this.defaultProfile[i]) 
+                            / (this.defaultProfile[i] * k);
+          
+                this.colors.push(
+                    this.mix(0.25, 0.55, force), 
+                    this.mix(0.55, 0.75, 0.75 - force), 
+                    this.mix(0.75, 1, 1 - force), 
+                    this. mix(0.25, 0.75, force
+                ));
             }
-         
         }
 
-        initColorBuffer(colorID, colorBuffer, this.colors);  
+       initColorBuffer(colorID, colorBuffer, this.colors);
+    }, 
+
+    getDefaultProfile: function(){
+        this.defaultProfile = [];
+        
+        for(let i = 0; i < this.points.length;i++){
+            let point = this.points[i];
+            
+            for(let j = 0; j < point.constraints.length; ++j){
+                this.defaultProfile.push(point.constraints[j].defaultDistance);
+            }
+        }
+    },
+
+    mix: function (x0, x1, m) {
+        return x0*(1 - m) + x1 * m;
     },
 }

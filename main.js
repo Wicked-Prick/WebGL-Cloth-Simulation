@@ -23,6 +23,7 @@ function init() {
     }
 
     document.onmouseup = e => {
+       
         currentPoint = false;
         pinned = false;
         unPinned = false;
@@ -33,6 +34,7 @@ function init() {
 }
 
 cloth = new Cloth();
+cloth.getDefaultProfile();
 
 try {
     gl = canvas.getContext('webgl');
@@ -73,11 +75,11 @@ document.addEventListener("keypress", function (key) {
     if (key.key == 'w') {
         render_mode = render_mode == gl.LINES ? gl.POINT : gl.LINES;
     } else if (key.key == 'g') {
-        gravity = gravity ? 0 : -0.04;
+        gravity = gravity ? 0 : -9.81;
     } else if (key.key == 'r') {
         cloth = new Cloth();
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indicesbuffer);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, cloth.indices, gl.STATIC_DRAW);
+        cloth.getDefaultProfile();
+        initIndicesBuffer(render_mode, indicesbuffer, cloth.indices);
     }
 });
 
@@ -105,16 +107,18 @@ function render() {
     gl.flush();
 }
 
+
 function animate() {
 
-    cloth.update(0.055);
+    cloth.update(0.0025);
+    cloth.updateStrain();
     cloth.mousePressed();
-    cloth.getColor();
     cloth.draggedPoint();
-
+  
     render();
 
     requestAnimFrame(animate);
+
 }
 
 window.onload = function() {

@@ -3,10 +3,11 @@ function Point(x, y, z, fixed = false) {
     this.y = this.oldY = y;
     this.z = this.oldZ = z;
     this.fixed = fixed;
+    this.accelerationX = this.accelerationY = this.accelerationZ = 0;
     this.velocityX = this.velocityY = this.velocityZ = 0;
-
+    
     this.constraints = new Array();
-
+    
 }
 
 Point.prototype = {
@@ -18,44 +19,56 @@ Point.prototype = {
             let dy = this.y - mouse.y;
             let dist = Math.sqrt(dx * dx + dy * dy);
 
-            if (mouse.down  && dist < mouse.influence) {
+            if (mouse.down && dist < mouse.influence) {
                 this.oldX = this.x - (mouse.x - mouse.px);
                 this.oldY = this.y - (mouse.y - mouse.py);
             } 
         }
+    
+        var springForceY = -k * (this.y - this.oldY);
+        var dampingForceY = damping * this.velocityY;
 
-        this.applyGravity(0., gravity, 0.);
+        this.addForce(0., springForceY + mass * gravity - dampingForceY , 0.);
 
-        var nextX = (this.x - this.oldX) * damping + this.velocityX * dt;
-        var nextY = (this.y - this.oldY) * damping + this.velocityY * dt;
+        var nextX = this.Verlet(this.x, this.oldX, this.accelerationX, damping, dt);
+        var nextY = this.Verlet(this.y, this.oldY, this.accelerationY, damping, dt);
 
         this.oldX = this.x;
         this.oldY = this.y;
 
         this.velocityX = this.velocityY = this.velocityZ = 0.;
+      
 
         if (!this.fixed) {
             this.x += nextX;
             this.y += nextY;
+            this.velocityy += this.accelerationX * dt;
+            this.velocityY += this.accelerationY * dt;
         }
         //Limiting boundaries.
         this.limBound();
     },
 
+
     update_constraints: function() {
         for (var i = 0; i < this.constraints.length; ++i) {
-            this.constraints[i].relaxation();
+            this.constraints[i].tick();
+            this.constraints[i].relaxation();    
         }
+    },
+
+    Verlet: function(pos, oldPos, acceleration, c, h){
+        return (pos - oldPos) * (0.99 - c) + acceleration * Math.pow(h, 2);
     },
 
     attach: function(point, len) {
         this.constraints.push(new Constraint(this, point, len));
     },
     
-    applyGravity: function(x, y, z) {
-        this.velocityX += x || 0;
-        this.velocityY += y || 0;
-        this.velocityZ += z || 0;
+    addForce: function(x, y, z) {
+        this.accelerationX += x / mass || 0;
+        this.accelerationY += y / mass || 0;
+        this.accelerationZ += z / mass || 0;
     },
 
     limBound: function(){

@@ -1,15 +1,13 @@
-function Constraint(pointOne, pointTwo, length) {
-    this.pointOne = pointOne;
-    this.pointTwo = pointTwo;
-    this.length = length;
- 
-    this.currentDistance = this.calculateDistance(pointOne, pointTwo);
-    this.defaultDistance = this.currentDistance;
-}
+class Constraint {
+    constructor(pointOne, pointTwo, length) {
+        this.pointOne = pointOne;
+        this.pointTwo = pointTwo;
+        this.length = length;   
+        this.currentDistance = calculateDistance(pointOne, pointTwo);
+        this.defaultDistance = this.currentDistance;
+    }
 
-Constraint.prototype = {
-
-    relaxation: function() {
+    relaxation() {
         let dx = this.pointTwo.x - this.pointOne.x;
         let dy = this.pointTwo.y - this.pointOne.y;
   
@@ -29,13 +27,10 @@ Constraint.prototype = {
             this.pointTwo.x -= normalizeX;
             this.pointTwo.y -= normalizeY;
         }
-    },
+    }
 
-    calculateDistance: function(a, b) {
-        return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
-    },
-
-    tick: function(){
-        this.currentDistance = this.calculateDistance(this.pointOne, this.pointTwo);
+    tick() {
+        this.currentDistance = calculateDistance(this.pointOne, this.pointTwo);
     }
 }
+

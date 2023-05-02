@@ -62,15 +62,15 @@ function CreateOrthoMatrix(l, r, b, t, n, f) {
 }
 
 let orthoMatrix = CreateOrthoMatrix(-1.0, 1.0, -1.0, 1.0, 0.1, 1024.0);
-var viewMatrix = CreateViewMatrix([0.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, 1.0, 0.0]);
-var modelViewMatrix = new Float32Array([
+let viewMatrix = CreateViewMatrix([0.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, 1.0, 0.0]);
+let modelViewMatrix = new Float32Array([
     1.0, 0.0, 0.0, 0.0,
     0.0, 1.0, 0.0, 0.0,
     0.0, 0.0, 1.0, 0.0,
     0.0, 0.0, 0.0, 1.0,
 ]);
 
-function initUniformParams(){
+function initUniformParams() {
     let orthoMatrixID = gl.getUniformLocation(program, "u_ortho");
     let modelMatrixID = gl.getUniformLocation(program, "u_model");
     let viewMatrixID = gl.getUniformLocation(program, "u_view");
@@ -82,7 +82,7 @@ function initUniformParams(){
     gl.uniformMatrix4fv(modelMatrixID, false, modelViewMatrix);
 }
 
-function initShaderProgram(vShader, fShader){
+ function initShaderProgram(vShader, fShader){
     let prog = gl.createProgram();
     gl.attachShader(prog, vShader);
     gl.attachShader(prog, fShader);

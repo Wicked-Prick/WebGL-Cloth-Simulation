@@ -1,5 +1,4 @@
 function init() {
-   
     document.onmousemove = e => {
         let rect = canvas.getBoundingClientRect();  
         mouse.px = mouse.x;
@@ -18,22 +17,21 @@ function init() {
             mouse.down = true;
         }
         if (e.shiftKey) {
-            unPinned = true;
+            pinned = false;
         }
     }
 
     document.onmouseup = e => {
-       
         currentPoint = false;
         pinned = false;
-        unPinned = false;
         mouse.down = false;
     }
 
     animate();
 }
 
-cloth = new Cloth();
+cloth = new Cloth(clothHeight, clothWidth);
+cloth.createCloth();
 cloth.getDefaultProfile();
 
 try {
@@ -107,21 +105,36 @@ function render() {
     gl.flush();
 }
 
+function draggedPoint() {
+    if (currentPoint) {
+        currentPoint.x = mouse.x;
+        currentPoint.y = mouse.y;
+        if (pinned) 
+            currentPoint.fixed = gravity;
+        else 
+            currentPoint.fixed = false;
+    }
+}
+
+function mousePressed() {
+    for (var i = 0; i < cloth.points.length; ++i) {
+        var point = cloth.points[i];
+        if (calculateDistance(point, mouse) < spacing && 
+            mouse.down && !currentPoint) 
+            currentPoint = point;
+    }
+}
 
 function animate() {
 
     cloth.update(0.0025);
     cloth.updateStrain();
-    cloth.mousePressed();
-    cloth.draggedPoint();
-  
+    mousePressed();
+    draggedPoint();
     render();
-
     requestAnimFrame(animate);
-
 }
 
 window.onload = function() {
-
     init();
 }

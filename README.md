@@ -1,4 +1,4 @@
-# WebGL-cloth-simulation
+# WebGL-Cloth-Simulation
 WebGL Cloth simulation by Verlet integration method and calculation of the stress map in it. 
 
 The Cloth is represented as a grid of dots connected by rigid rods. During the simulation, the fabric changes color depending on the tension of the fabric at each of the vertices according to Hooke's law.

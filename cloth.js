@@ -51,7 +51,7 @@ class Cloth {
             this.currentProfile = [];
             for(let i = 0; i < this.points.length;i++){
                 let point = this.points[i];
-                point.update_constraints();   
+                point.updateConstraints();   
                 
                 for(let j = 0; j < point.constraints.length; ++j){
                     this.currentProfile.push(point.constraints[j].currentDistance);

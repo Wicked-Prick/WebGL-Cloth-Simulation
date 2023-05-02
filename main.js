@@ -126,7 +126,6 @@ function mousePressed() {
 }
 
 function animate() {
-
     cloth.update(0.0025);
     cloth.updateStrain();
     mousePressed();

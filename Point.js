@@ -46,7 +46,7 @@ class Point {
     }
 
 
-    update_constraints() {
+    updateConstraints() {
         for (var i = 0; i < this.constraints.length; ++i) {
             this.constraints[i].tick();
             this.constraints[i].relaxation();    

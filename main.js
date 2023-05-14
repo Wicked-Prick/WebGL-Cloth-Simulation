@@ -77,7 +77,8 @@ document.addEventListener("keypress", function (key) {
     } else if (key.key == 'g') {
         gravity = gravity ? 0 : -9.81;
     } else if (key.key == 'r') {
-        cloth = new Cloth();
+        cloth = new Cloth(clothHeight, clothWidth);
+        cloth.createCloth();
         cloth.getDefaultProfile();
         initIndicesBuffer(render_mode, indicesbuffer, cloth.indices);
     }

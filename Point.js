@@ -37,7 +37,7 @@ class Point {
         if (!this.fixed) {
             this.x += nextX;
             this.y += nextY;
-            this.velocityy += this.accelerationX * dt;
+            this.velocityX += this.accelerationX * dt;
             this.velocityY += this.accelerationY * dt;
         }
         

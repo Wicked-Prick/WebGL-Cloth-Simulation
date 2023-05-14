@@ -12,7 +12,8 @@ var mouse = {
 };
 
 var pinned = false;
-var currentPoint = false;
+var unPinned = false;
+var currentPoint = null;
 var gl = undefined;
 var accuracy = 45;
 var gravity = -9.81;

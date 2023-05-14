@@ -18,12 +18,14 @@ function init() {
         }
         if (e.shiftKey) {
             pinned = false;
+            unPinned = true;
         }
     }
 
     document.onmouseup = e => {
         currentPoint = false;
         pinned = false;
+        unPinned = false;
         mouse.down = false;
     }
 
@@ -106,12 +108,12 @@ function render() {
 }
 
 function draggedPoint() {
-    if (currentPoint) {
+    if (currentPoint && pinned != undefined) {
         currentPoint.x = mouse.x;
         currentPoint.y = mouse.y;
         if (pinned) 
-            currentPoint.fixed = gravity;
-        else 
+            currentPoint.fixed = true;
+        else if (unPinned)
             currentPoint.fixed = false;
     }
 }
